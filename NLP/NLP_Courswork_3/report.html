@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Amazon Beauty Reviews: NLP Analysis</title>
+<style>
+    @page {
+        size: A4 portrait;
+        margin: 1.4cm 1.6cm 1.4cm 1.6cm;
+        @bottom-right {
+            content: "Page " counter(page) " of " counter(pages);
+            font-size: 8.5pt;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #666;
+        }
+        @bottom-left {
+            content: "Amazon Beauty Reviews: NLP Analysis — Coursework Report";
+            font-size: 8.5pt;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: #666;
+        }
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        color: #222222;
+        line-height: 1.45;
+        font-size: 9.5pt;
+        margin: 0;
+        padding: 0;
+    }
+
+    .title-header {
+        border-bottom: 2px solid #204070;
+        padding-bottom: 8px;
+        margin-bottom: 12px;
+    }
+
+    h1 {
+        font-size: 17pt;
+        color: #1a2a44;
+        margin: 0 0 4px 0;
+        font-weight: 700;
+    }
+
+    .meta-line {
+        font-size: 9.5pt;
+        font-weight: 600;
+        color: #4a5568;
+    }
+
+    h2 {
+        font-size: 11pt;
+        color: #204070;
+        margin: 12px 0 6px 0;
+        font-weight: 700;
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 3px;
+    }
+
+    p {
+        margin: 0 0 7px 0;
+        text-align: justify;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 8.8pt;
+        margin: 8px 0 10px 0;
+    }
+
+    th, td {
+        padding: 5px 8px;
+        border: 1px solid #cbd5e0;
+        text-align: left;
+    }
+
+    th {
+        background-color: #f1f5f9;
+        color: #1e293b;
+        font-weight: 700;
+        font-size: 8.5pt;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f8fafc;
+    }
+
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .font-bold { font-weight: bold; }
+
+    .grid-2 {
+        display: flex;
+        gap: 14px;
+        margin: 8px 0;
+    }
+
+    .col {
+        flex: 1;
+    }
+
+    .img-card {
+        text-align: center;
+        margin: 6px 0;
+    }
+
+    .img-card img {
+        max-width: 100%;
+        border: 1px solid #cbd5e0;
+        border-radius: 4px;
+    }
+
+    .caption {
+        font-size: 7.5pt;
+        color: #64748b;
+        margin-top: 3px;
+        font-style: italic;
+    }
+
+    .page-break {
+        page-break-after: always;
+    }
+
+    .insight-box {
+        background: #f8fafc;
+        border-left: 3px solid #204070;
+        padding: 8px 10px;
+        margin: 8px 0;
+        font-size: 9pt;
+    }
+</style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<div class="title-header">
+    <h1>Amazon Beauty Reviews: NLP Analysis</h1>
+    <div class="meta-line">7,990 valid reviews &nbsp;|&nbsp; positive = 3,996 (50.0%) &nbsp;|&nbsp; negative = 3,994 (50.0%)</div>
+</div>
+
+<h2>Preprocessing rationale</h2>
+<p>Two token streams were retained for different objectives. The <strong>POS-filtered stream</strong> keeps lemmatised <code>NOUN</code> and <code>ADJ</code> tokens, reducing grammatical noise for TF-IDF and interpretable LDA topics. The <strong>lightly cleaned Word2Vec stream</strong> keeps all alphabetic content-word lemmas, preserving broader semantic context for averaged embeddings. <strong>NER</strong> runs on the original spaCy documents so entity extraction is not restricted by either modelling stream.</p>
+
+<div class="grid-2">
+    <div class="col img-card">
+        <img src="figures/tfidf_cosine_similarity_heatmap.png" style="height: 135px;">
+        <div class="caption">Pairwise TF-IDF Cosine Similarity Heatmap (stratified sample sorted by sentiment).</div>
+    </div>
+    <div class="col img-card">
+        <img src="figures/embeddings_pca_comparison.png" style="height: 135px;">
+        <div class="caption">2-D PCA Comparison: TF-IDF (TruncatedSVD-50 &rarr; PCA-2) vs. Word2Vec embeddings.</div>
+    </div>
+</div>
+
+<h2>Top five LDA topics and sentiment split</h2>
+<p>Models with k=5, 7, 10 were compared using c_v coherence; <strong>k=5 was selected (c_v=0.5012)</strong>.</p>
+
+<div class="img-card" style="margin: 4px 0 6px 0;">
+    <img src="figures/lda_wordclouds.png" style="height: 60px; width: 100%; object-fit: contain;">
+    <div class="caption">Word cloud panels for the 5 discovered LDA topics.</div>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th class="text-center" style="width: 8%;">Topic</th>
+            <th style="width: 32%;">Human-Readable Label</th>
+            <th style="width: 30%;">Top Representative Terms</th>
+            <th class="text-right" style="width: 12%;">Reviews</th>
+            <th class="text-right" style="width: 9%;">% Pos</th>
+            <th class="text-right" style="width: 9%;">% Neg</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td class="text-center font-bold">1</td>
+            <td>Makeup Tools & Application</td>
+            <td>brush, money, small, item, head</td>
+            <td class="text-right">1,784</td>
+            <td class="text-right font-bold">47.8%</td>
+            <td class="text-right font-bold">52.2%</td>
+        </tr>
+        <tr>
+            <td class="text-center font-bold">2</td>
+            <td>Eye & Face Makeup</td>
+            <td>color, eye, lash, light, makeup</td>
+            <td class="text-right">1,757</td>
+            <td class="text-right font-bold">45.4%</td>
+            <td class="text-right font-bold">54.6%</td>
+        </tr>
+        <tr>
+            <td class="text-center font-bold">3</td>
+            <td>Nail Care & Quality</td>
+            <td>great, product, good, nail, quality</td>
+            <td class="text-right">1,682</td>
+            <td class="text-right font-bold">54.9%</td>
+            <td class="text-right font-bold">45.1%</td>
+        </tr>
+        <tr>
+            <td class="text-center font-bold">4</td>
+            <td>Skincare & Cleansers</td>
+            <td>product, skin, good, smell, scent</td>
+            <td class="text-right">1,083</td>
+            <td class="text-right font-bold">46.7%</td>
+            <td class="text-right font-bold">53.3%</td>
+        </tr>
+        <tr>
+            <td class="text-center font-bold">5</td>
+            <td>Hair & Wig Styling</td>
+            <td>hair, wig, good, thin, product</td>
+            <td class="text-right">1,684</td>
+            <td class="text-right font-bold">54.5%</td>
+            <td class="text-right font-bold">45.5%</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- PAGE 2 -->
+<h2>Held-out classifier comparison</h2>
+<p>Evaluation uses a stratified 20% held-out test split (<code>random_state=42</code>).</p>
+
+<table>
+    <thead>
+        <tr>
+            <th style="width: 30%;">Classifier</th>
+            <th class="text-center" style="width: 14%;">Accuracy</th>
+            <th class="text-center" style="width: 14%;">Precision</th>
+            <th class="text-center" style="width: 14%;">Recall</th>
+            <th class="text-center" style="width: 14%;">F1-Score</th>
+            <th class="text-center" style="width: 14%;">ROC-AUC</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td><strong>MultinomialNB</strong></td>
+            <td class="text-center font-bold">0.7716</td>
+            <td class="text-center">0.7477</td>
+            <td class="text-center font-bold">0.8198</td>
+            <td class="text-center font-bold">0.7821</td>
+            <td class="text-center">0.8522</td>
+        </tr>
+        <tr>
+            <td><strong>BernoulliNB</strong></td>
+            <td class="text-center">0.7610</td>
+            <td class="text-center">0.7718</td>
+            <td class="text-center">0.7409</td>
+            <td class="text-center">0.7561</td>
+            <td class="text-center">0.8459</td>
+        </tr>
+        <tr>
+            <td><strong>Logistic Regression</strong></td>
+            <td class="text-center">0.7610</td>
+            <td class="text-center font-bold">0.7747</td>
+            <td class="text-center">0.7359</td>
+            <td class="text-center">0.7548</td>
+            <td class="text-center font-bold">0.8548</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="grid-2" style="align-items: center;">
+    <div class="col img-card" style="flex: 1.1;">
+        <img src="figures/roc_curves_comparison.png" style="height: 160px;">
+        <div class="caption">Receiver Operating Characteristic (ROC) curves comparison.</div>
+    </div>
+    <div class="col" style="flex: 1.2;">
+        <p style="font-size: 9pt;"><strong>Classifier Performance Notes:</strong></p>
+        <p style="font-size: 8.8pt;">MultinomialNB achieved the highest accuracy (77.16%) and F1-score (0.7821) by effectively leveraging term-frequency counts to capture positive sentiment tokens. Logistic Regression yielded the highest ROC-AUC (0.8548) and precision (77.47%), demonstrating superior confidence threshold calibration.</p>
+    </div>
+</div>
+
+<h2>Entity and representation insights</h2>
+<div class="insight-box">
+    <p><strong>NER insight:</strong> <code>Braun</code> (ORG) has the lowest mean sentiment among the top named brands/products: <strong>0.167</strong> across 6 mentioning reviews (83.3% negative feedback). Negative reviews consistently highlight replacement blade dullness, motor issues, and packaging defects.</p>
+    <p><strong>TF-IDF similarity:</strong> same-label mean = <strong>0.0161</strong>; cross-label mean = <strong>0.0132</strong>; <strong>same-label > cross-label = True</strong>. This validates that documents sharing the same sentiment exhibit higher intra-class lexical alignment than cross-sentiment pairs.</p>
+    <p style="margin-bottom: 0;">The classifier table and topic table should be interpreted with the entity recognition and topic-label heuristics in mind.</p>
+</div>
+
+<div class="img-card" style="margin-top: 10px;">
+    <img src="figures/ner_top20_sentiment.png" style="height: 175px;">
+    <div class="caption">Top 20 Named Entities & Mean Sentiment Score (Green = positive, Red = negative feedback).</div>
+</div>
+
+</body>
+</html>
